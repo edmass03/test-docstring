@@ -10,6 +10,26 @@ mpiston =   5   # valeur masse piston@ [kg]
 mbielle =   6   # valeur masse bielle  [kg]
 Q       =   1650   # valeur chaleur emise par fuel par kg de melange admis@ [J/kg_inlet gas]
 
+###############################
+#    Runge-Kutta (pour p)     #
+###############################
+
+def integrator(Xstart,Ustart,Xend,h,f):
+    """
+    h le pas entre chaque X
+    f la fonction à intégrer
+    """
+    imax = int((Xend-Xstart)/h)
+    X = Xstart + np.arange(imax+1)*h
+    U = np.zeros((imax+1,3)); U[0,:] = Ustart
+    for i in range(imax):
+        K1 = f(U[i,:]       )
+        K2 = f(U[i,:]+K1*h/2)
+        K3 = f(U[i,:]+K2*h/2)
+        K4 = f(U[i,:]+K3*h  )
+        U[i+1,:] = U[i,:] + h*(K1+2*K2+2*K3+K4)/6     
+    return X,U
+
 
 def myfunc(rpm, s, theta, thetaC, deltaThetaC):
     """ 
@@ -36,6 +56,7 @@ def myfunc(rpm, s, theta, thetaC, deltaThetaC):
     F_inertie(theta) : [N]
     (une force est positive si dirigée vers le haut).
     """
+	
 	
     """""""""""""""""
     Calcul du V_output en fonction de thêta

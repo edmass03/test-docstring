@@ -98,7 +98,35 @@ def myfunc(rpm, s, theta, thetaC, deltaThetaC):
     Calcul du Q_output en fonction de thêta 
 
     """""""""""""""""
+    poids_air = np.array(V_output * 1.292)
+    Q_output = np.zeros(theta.size)
+    Q_max = float('-inf')
+    Q_min = float('inf')
+    for i in range (len(theta)):
+        arg = math.pi * ((theta[i] - thetaC) / deltaThetaC )
+        Q_output[i] = ((Q * poids_air[i]) / 2) * (1 - math.cos(math.radians(arg)))
+            
+        if (Q_output[i] > Q_max) :
+            Q_max = Q_output[i]
+        if (Q_output[i] < Q_min) :
+            Q_min = Q_output[i]
     
+    """""""""""""""""
+    Graphe de Q_output en fct de theta
+    
+    """""""""""""""""
+    
+    plt.plot(theta, Q_output)
+    
+    # Axes
+    fs_text = 16 # Taille du texte
+    plt.xlabel("$Thêta$ [degré]", fontsize=fs_text)
+    plt.ylabel("$Q_{output}$ [J]", fontsize=fs_text)
+    
+    # Titre
+    plt.title("Q_max = " + str(Q_max) + "    Q_min = " + str(Q_min))
+    plt.suptitle("Chaleur en fonction de l'angle de vilebrequin", fontsize=fs_text)
+    plt.show()
     """""""""""""""""
     Calcul du F_pied_output en fonction de thêta 
 
